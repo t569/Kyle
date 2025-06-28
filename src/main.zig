@@ -13,16 +13,13 @@ pub fn main() !void {
     const params = kernel.KernelParams{ .gamma = 0.5 };
     const kernel_ = kernel.rbfKernel;
 
-    // const alpha = try dataset.allocator.alloc(f64, dataset.inputs.len);
-    // const alpha_star = try dataset.allocator.alloc(f64, dataset.inputs.len);
-    // @memset(alpha, 0.0);
-    // @memset(alpha_star, 0.0);
+    const result = try kernel.trainSMO(dataset.inputs, dataset.targets, C, epsilon, kernel_, params, max_iter, dataset.allocator);
+    const alpha = result.alpha;
+    const alpha_star = result.alpha_star;
+    const bias = result.bias;
+    kernel.evaluateModel(dataset, alpha, alpha_star, bias, kernel_, params);
 
-    // const result = try kernel.trainSMO(dataset, C, epsilon, kernel_, params, max_iter);
-    // const alpha = result.alpha;
-    // const alpha_star = result.alpha_star;
-    // const bias = result.bias;
-
-    try kernel.trainSMO(dataset.inputs, dataset.targets, C, epsilon, kernel_, params, max_iter, dataset.allocator);
-    // kernel.evaluateModel(dataset, alpha, alpha_star, bias, kernel_, params);
+    // free the allocated data
+    dataset.allocator.free(alpha);
+    dataset.allocator.free(alpha_star);
 }
